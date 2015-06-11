@@ -25,7 +25,8 @@ EOF
 linode_add() {
   VAR="$*"
   echo "Add linode ... '${VAR}'"
-  ansible local -c local -m linode -a '${VAR}'
+  CMD="ansible local -c local -m linode -a '$VAR'"
+  eval $CMD
 }
 
 if [ "$#" -lt 1 ]; then
