@@ -19,9 +19,9 @@ EOF
 }
 
 create_site() {
-  VARS=$1
+  VARFILE=$1
   echo "Creating site ..."
-  ansible-playbook -i /etc/ansible/linode-inventory $BASE/ansible-docker/playbooks/$PLAYBOOK --extra-vars '$VARS' --tags=start
+  ansible-playbook -i /etc/ansible/linode-inventory $BASE/ansible-docker/playbooks/$PLAYBOOK --extra-vars "$VARFILE" --tags=start
 }
 
 BASE=/etc/ansible
@@ -42,10 +42,10 @@ done
 
 # ====================
 if [ -f "$BASE/target/$TARGET" ]; then
-  EXTRAVARS=`cat $BASE/target/$TARGET`
+  EXTRAVARS="@${BASE}/target/$TARGET"
   cat << EOF
 Command will be execute:
-  ansible-playbook -i /etc/ansible/linode-inventory playbooks/docker.yml --extra-vars '$EXTRAVARS' --tags=start"
+  ansible-playbook -i /etc/ansible/linode-inventory playbooks/docker.yml --extra-vars "$EXTRAVARS" --tags=start
 
 EOF
   if [ $PROMPT -eq 0 ]; then
