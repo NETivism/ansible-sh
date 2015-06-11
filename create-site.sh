@@ -7,7 +7,7 @@ Help:
   Assume your base is /etc/ansible, 
   BASE/ansible-docker/playbooks - have your playbooks
   BASE/target - have your docker hosts inventories
-  BASE/target/target_name/*.json - extravars json
+  BASE/target/target_name/* - extravars json, usally naming by domain name
 
   Create site:
     create-site.sh linode_target/file_name docker.yml
