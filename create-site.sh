@@ -10,10 +10,10 @@ Help:
   BASE/target/target_name/* - extravars json, usally naming by domain name
 
   Create site:
-    create-site.sh linode_target/json_file playbook.yml
+    $0 linode_target/json_file playbook.yml
 
   Create site without prompt:
-    create-site.sh server1/test.com docker.yml --yes
+    $0 server1/test.com docker.yml --yes
 
   Example json:
     {"target":"neticrm-d7-docker","domain":"demo.neticrm.tw","port_www":"8003","port_db":"10003","repos":"netivism/docker-wheezy-php55","mount":"/var/www/drupal7","dbname":"demoneticrm","passwd":"abcabc","type":"neticrm"}

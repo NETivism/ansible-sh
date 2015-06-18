@@ -5,7 +5,7 @@ show_help() {
 cat << EOF
 Help: 
   Usage:
-    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
+    $0 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
   datacenter: 8(Tokyo) or 9(Singapore)
   distribution: please always use 140(debian jessie)
   plan: 1,2,4,8 GB mem
