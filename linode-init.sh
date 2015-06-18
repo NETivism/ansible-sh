@@ -1,5 +1,6 @@
 #!/bin/bash
 
+BASE=/etc/ansible
 # Usage info
 show_help() {
 cat << EOF
@@ -10,6 +11,7 @@ Help:
   This script will initialize your linode, include these step:
     - Assume you'll use "answerable" for ansible login user
     - First will login in root, will ask root password for once
+    - Put your key at $BASE/ansible-docker/playbooks/roles/init/files/authorized_key
     - Add authorized_key for "answerable" further use
     - Install docker and some other packages
 
@@ -24,9 +26,8 @@ else
 fi
 
 
-BASE=/etc/ansible
 
-read -p "Did you prepared your authorized_key and root password? (y/n)" CHOICE 
+read -p "You need to prepared authorized_key and root password. Really want to go? (y/n)" CHOICE 
 case "$CHOICE" in 
   y|Y ) 
     ansible-playbook -k -i /etc/ansible/linode-inventory $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable"
