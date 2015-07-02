@@ -25,7 +25,7 @@ EOF
 linode_add() {
   VAR="$*"
   echo "Add linode ... '${VAR}'"
-  CMD="ansible local -c local -m linode -a '$VAR'"
+  CMD="ansible all -i "localhost," -c local -m linode -a '$VAR'"
   eval $CMD
 }
 
@@ -46,7 +46,7 @@ done
 # ====================
 cat << EOF
 Command will be execute:
-  ansible local -c local -m linode -a '$ARGS'
+  ansible all -i "localhost," -c local -m linode -a '$ARGS'
 
 EOF
 if [ $PROMPT -eq 0 ]; then
