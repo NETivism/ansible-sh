@@ -30,8 +30,8 @@ fi
 read -p "You need to prepared authorized_key and root password. Really want to go? (y/n)" CHOICE 
 case "$CHOICE" in 
   y|Y ) 
-    ansible-playbook -k -i /etc/ansible/linode-inventory $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable"
-    ansible-playbook -i /etc/ansible/linode-inventory $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable"
+    ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
     ;;
   n|N ) 
     exit 1
