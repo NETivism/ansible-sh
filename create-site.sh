@@ -16,14 +16,15 @@ Help:
     $0 server1/test.com docker.yml --yes
 
   Example json:
-    {"target":"neticrm-d7-docker","domain":"demo.neticrm.tw","port_www":"8003","port_db":"10003","repos":"netivism/docker-wheezy-php55","mount":"/var/www/drupal7","dbname":"demoneticrm","passwd":"abcabc","type":"neticrm"}
+    {"target":"neticrm-d7-docker","domain":"demo.neticrm.tw","port_www":"8003","port_db":"10003","repos":"netivism/docker-wheezy-php55:fpm","mount":"/mnt/neticrm-7","dbname":"demoneticrm","passwd":"abcabc","type":"neticrm:fpm"}
 EOF
 }
 
 create_site() {
   VARFILE=$1
+  PLAYBOOK=$2
   echo "Creating site ..."
-  ansible-playbook $BASE/ansible-docker/playbooks/$PLAYBOOK --extra-vars "$VARFILE" --tags=start
+  ansible-playbook $PLAYBOOK --extra-vars "$VARFILE" --tags=start
 }
 
 BASE=/etc/ansible
@@ -32,7 +33,14 @@ if [ "$#" -lt 2 ]; then
   exit 0
 else
   TARGET=$1
+  if [ ! -f "$TARGET" ]; then
+    TARGET="$BASE/target/$TARGET"
+  fi
+
   PLAYBOOK=$2
+  if [ ! -f "$PLAYBOOK" ]; then
+    PLAYBOOK=$BASE/ansible-docker/playbooks/$PLAYBOOK
+  fi
 fi
 
 PROMPT=1
@@ -43,8 +51,8 @@ for VAR in "$@"; do
 done
 
 # ====================
-if [ -f "$BASE/target/$TARGET" ]; then
-  EXTRAVARS="@${BASE}/target/$TARGET"
+if [ -f "$TARGET" ]; then
+  EXTRAVARS="@$TARGET"
   cat << EOF
 Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
