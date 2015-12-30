@@ -30,6 +30,10 @@ fi
 read -p "You need to prepared authorized_key and root password. Really want to go? (y/n)" CHOICE 
 case "$CHOICE" in 
   y|Y ) 
+    linode-linode group -g "ansible dedicated" -l "$TARGET"
+    IP=$(linode show $TARGET | grep 'ips' | awk '{print $2}')
+    echo "$IP $TARGET" >> /etc/hosts
+    ssh-keyscan $IP >> ~/.ssh/known_hosts
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
