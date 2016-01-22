@@ -25,7 +25,9 @@ create_site() {
   VARFILE=$1
   PLAYBOOK=$2
   echo "Creating site ..."
-  ansible-playbook $PLAYBOOK --extra-vars "$VARFILE" --tags=start
+  ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=start
+  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
+  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
 }
 
 BASE=/etc/ansible
@@ -33,15 +35,13 @@ if [ "$#" -lt 2 ]; then
   show_help
   exit 0
 else
-  TARGET=$1
-  if [ ! -f "$TARGET" ]; then
-    TARGET="$BASE/target/$TARGET"
-  fi
-
-  PLAYBOOK=$2
-  if [ ! -f "$PLAYBOOK" ]; then
-    PLAYBOOK=$BASE/ansible-docker/playbooks/$PLAYBOOK
-  fi
+  IFS='/' read -r -a INPUT <<< "$1"
+  LINODE="${INPUT[0]}"
+  SITE="${INPUT[1]}"
+  TARGET="$BASE/target/$LINODE"
+  PLAYBOOK="$BASE/ansible-docker/playbooks"
+  DOCKER=$2
+  MAIL="mail.yml"
 fi
 
 PROMPT=1
@@ -52,20 +52,22 @@ for VAR in "$@"; do
 done
 
 # ====================
-if [ -f "$TARGET" ]; then
-  EXTRAVARS="@$TARGET"
+if [ -f "$TARGET/$SITE" ]; then
+  EXTRAVARS="@$TARGET/$SITE"
   cat << EOF
 Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
+  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
+  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
 
 EOF
   if [ $PROMPT -eq 0 ]; then
-    create_site $EXTRAVARS $PLAYBOOK
+    create_site $EXTRAVARS $PLAYBOOK/$DOCKER
   else
     read -p "Are you really want to create site? (y/n)" CHOICE 
     case "$CHOICE" in 
       y|Y ) 
-        create_site $EXTRAVARS $PLAYBOOK
+        create_site $EXTRAVARS $PLAYBOOK/$DOCKER
         ;;
       n|N ) 
         exit 1

@@ -23,6 +23,7 @@ if [ "$#" -lt 1 ]; then
   exit 0
 else
   TARGET=$1
+  HOSTNAME=$2
 fi
 
 
@@ -34,11 +35,12 @@ case "$CHOICE" in
     IP=$(linode show $TARGET | grep 'ips' | awk '{print $2}')
     echo "$IP $TARGET" >> /etc/hosts
     ssh-keyscan $IP >> ~/.ssh/known_hosts
-    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable"
+    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t deploy-6,deploy-7
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
+    ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
     ;;
   n|N ) 
     exit 1
