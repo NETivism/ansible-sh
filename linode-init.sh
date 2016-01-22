@@ -6,7 +6,7 @@ show_help() {
 cat << EOF
 Help: 
   Usage:
-    $0 linode_name
+    $0 linode_name hostname
 
   This script will initialize your linode, include these step:
     - Assume you'll use "answerable" for ansible login user
@@ -18,7 +18,7 @@ Help:
 EOF
 }
 
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
   show_help
   exit 0
 else
