@@ -28,6 +28,19 @@ create_site() {
   ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=start
   ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
   ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
+  create_email
+  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+}
+
+create_email() {
+  file="$TARGET/vmail_account"
+  json_file="$TARGET/vmail_json"
+  sed 's/\[\"Adding: //g' "$file" | sed 's/\"\]//g' > "$json_file"
+  email=$(cat "$json_file")
+  IFS=' ' read -r -a EMAIL <<< "$email"
+  EMAIL_ACCOUNT="${EMAIL[0]}"
+  EMAIL_PASSWORD="${EMAIL[1]}"
+  echo {\"email\":[{\"username\":\""$EMAIL_ACCOUNT"\", \"password\":\""$EMAIL_PASSWORD"\"}]} > "$json_file"
 }
 
 BASE=/etc/ansible
@@ -62,12 +75,12 @@ Command will be execute:
 
 EOF
   if [ $PROMPT -eq 0 ]; then
-    create_site $EXTRAVARS $PLAYBOOK/$DOCKER
+    create_site $EXTRAVARS $PLAYBOOK
   else
     read -p "Are you really want to create site? (y/n)" CHOICE 
     case "$CHOICE" in 
       y|Y ) 
-        create_site $EXTRAVARS $PLAYBOOK/$DOCKER
+        create_site $EXTRAVARS $PLAYBOOK
         ;;
       n|N ) 
         exit 1
