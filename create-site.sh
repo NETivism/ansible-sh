@@ -35,7 +35,7 @@ create_site() {
 create_email() {
   file="$TARGET/vmail_account"
   json_file="$TARGET/vmail_json"
-  sed 's/\[\"Adding: //g' "$file" | sed 's/\"\]//g' > "$json_file"
+  sed "s/\[u'Adding: //g" "$file" | sed "s/'\]//g" > "$json_file"
   email=$(cat "$json_file")
   IFS=' ' read -r -a EMAIL <<< "$email"
   EMAIL_ACCOUNT="${EMAIL[0]}"
