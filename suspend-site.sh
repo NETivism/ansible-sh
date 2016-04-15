@@ -57,7 +57,7 @@ EOF
   if [ $PROMPT -eq 0 ]; then
     suspend_site $EXTRAVARS $PLAYBOOK
   else
-    read -p "Are you really want to create site? (y/n)" CHOICE 
+    read -p "Are you really want to suspend site? (y/n)" CHOICE 
     case "$CHOICE" in 
       y|Y ) 
         suspend_site $EXTRAVARS $PLAYBOOK
