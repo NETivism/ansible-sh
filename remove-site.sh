@@ -23,7 +23,7 @@ remove_site() {
 }
 
 BASE=/etc/ansible
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 1 ]; then
   show_help
   exit 0
 else
