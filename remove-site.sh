@@ -43,7 +43,9 @@ if [ -f "$TARGET/$SITE" ]; then
   EXTRAVARS="@$TARGET/$SITE"
   cat << EOF
 Command will be execute:
-  ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=suspend
+  ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=remove
+  ansible-playbook nginx.yml --extra-vars "$EXTRAVARS" --tags=remove
+  ansible-playbook dns.yml --extra-vars "$EXTRAVARS" --tags=remove
 
 EOF
   if [ $PROMPT -eq 0 ]; then
