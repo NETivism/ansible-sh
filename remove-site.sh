@@ -12,12 +12,13 @@ EOF
 remove_site() {
   VARFILE=$1
   PLAYBOOK=$2
-  echo "removing container ..."
+  echo "removing site ..."
   ansible-playbook $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove
-  echo "removing nginx config ..."
-  ansible-playbook $PLAYBOOK/nginx.yml --extra-vars "$VARFILE" --tags=remove
-  echo "removing dns record ..."
-  ansible-playbook $PLAYBOOK/dns.yml --extra-vars "$VARFILE" --tags=remove
+  
+  #echo "removing nginx config ..."
+  #ansible-playbook $PLAYBOOK/nginx.yml --extra-vars "$VARFILE" --tags=remove
+  #echo "removing dns record ..."
+  #ansible-playbook $PLAYBOOK/dns.yml --extra-vars "$VARFILE" --tags=remove
   
   echo "done"
 }
