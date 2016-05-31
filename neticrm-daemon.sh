@@ -11,7 +11,7 @@ function check_status() {
   STATUS_CODE=$1
   JSON_FILE=$2
   PLAYBOOK_BASE=/etc/ansible/ansible-docker/playbooks
-  SCRIPT_BASE=/etc/ansible/ansible-sh
+  SCRIPT_BASE=/home/vagrant/ansible-sh
   case "$STATUS_CODE" in
     1)
       ;;
@@ -29,7 +29,6 @@ function check_status() {
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
       $SCRIPT_BASE/suspend-site.sh $TARGET/$DOMAIN docker.yml --yes
-      #ansible-playbook $PLAYBOOK_BASE/docker.yml --extra-vars "@$JSON_FILE" --tags suspend
       jq -c '.status=2' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
       ;;
     33)
