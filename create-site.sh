@@ -34,6 +34,7 @@ create_site() {
   create_email
   ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
   ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=welcome
+  ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
 }
 
 create_email() {
@@ -59,6 +60,7 @@ else
   PLAYBOOK="$BASE/ansible-docker/playbooks"
   DOCKER=$2
   MAIL="mail.yml"
+  BACKUP="backup.yml"
 fi
 
 PROMPT=1
@@ -76,6 +78,7 @@ Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
+  ansible-playbook backup.yml --extra-vars "$EXTRAVARS" --tags=single-site
 
 EOF
   if [ $PROMPT -eq 0 ]; then

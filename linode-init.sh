@@ -41,6 +41,7 @@ case "$CHOICE" in
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
+    ansible-playbook $BASE/ansible-docker/playbooks/backup.yml --extra-vars "target=$TARGET" -t start
     ;;
   n|N ) 
     exit 1
