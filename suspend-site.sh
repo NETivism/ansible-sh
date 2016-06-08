@@ -22,7 +22,7 @@ suspend_site() {
   VARFILE=$1
   PLAYBOOK=$2
   echo "Creating site ..."
-  ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=suspend
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=suspend
 }
 
 BASE=/etc/ansible
