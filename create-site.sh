@@ -32,9 +32,10 @@ create_site() {
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
   create_email
-  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
-  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=welcome
-  ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
+
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
 }
 
 create_email() {
