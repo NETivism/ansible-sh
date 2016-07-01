@@ -42,9 +42,9 @@ create_email() {
   file="$TARGET/vmail_account"
   json_file="$TARGET/vmail_json"
   email=$(cat "$file")
-  IFS=' ' read -ra MAIL <<< "$email"
-  EMAIL_ACCOUNT="${MAIL[0]}"
-  EMAIL_PASSWORD="${MAIL[1]}"
+  IFS=' ' read -ra VAR <<< "$email"
+  EMAIL_ACCOUNT="${VAR[0]}"
+  EMAIL_PASSWORD="${VAR[1]}"
   echo {\"email\":[{\"username\":\""$EMAIL_ACCOUNT"\", \"password\":\""$EMAIL_PASSWORD"\"}]} > "$json_file"
 }
 
