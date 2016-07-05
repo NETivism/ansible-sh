@@ -21,7 +21,7 @@ EOF
 suspend_site() {
   VARFILE=$1
   PLAYBOOK=$2
-  echo "Creating site ..."
+  echo "Suspend site ..."
   /usr/local/bin/ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=suspend
 }
 
