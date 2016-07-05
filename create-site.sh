@@ -21,6 +21,8 @@ Help:
 EOF
 }
 
+set -e
+
 create_site() {
   VARFILE=$1
   PLAYBOOK=$2
