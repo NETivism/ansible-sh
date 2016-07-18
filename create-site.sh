@@ -28,6 +28,7 @@ create_site() {
   PLAYBOOK=$2
   echo "Creating site ..."
   /usr/local/bin/ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=start
+
   echo "Waiting site installation ..."
   # we needs this because when mail enable, we still running drupal download and install
   sleep 60
@@ -38,6 +39,7 @@ create_site() {
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
   /usr/local/bin/ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 }
 
 create_email() {
@@ -63,6 +65,7 @@ else
   DOCKER=$2
   MAIL="mail.yml"
   BACKUP="backup.yml"
+  SITESET="neticrm-deploy.yml"
 fi
 
 PROMPT=1
@@ -81,6 +84,7 @@ Command will be execute:
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
   ansible-playbook backup.yml --extra-vars "$EXTRAVARS" --tags=single-site
+  ansible-playbook neticrm-deploy.yml --extra-vars "$EXTRAVARS" --tags=single-site
 
 EOF
   if [ $PROMPT -eq 0 ]; then
@@ -102,4 +106,3 @@ else
   show_help
   exit 0
 fi
-

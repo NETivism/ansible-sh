@@ -3,8 +3,8 @@
 # Usage info
 show_help() {
 cat << EOF
-Help: 
-  Assume your base is /etc/ansible, 
+Help:
+  Assume your base is /etc/ansible,
   BASE/ansible-docker/playbooks - have your playbooks
   BASE/target - have your docker hosts inventories
   BASE/target/target_name/* - extravars json, usally naming by domain name
@@ -26,13 +26,19 @@ create_site() {
   PLAYBOOK=$2
   echo "Creating site ..."
   ansible-playbook $PLAYBOOK/$DOCKER --extra-vars "$VARFILE" --tags=start
+
   echo "Waiting site installation ..."
   # we needs this because when mail enable, we still running drupal download and install
-  sleep 60
-  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
-  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
+  sleep 30
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
   create_email
-  ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site
+  /usr/local/bin/ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site
+
+  echo "Prepare to upgrade ..."
   sleep 30
   ansible $LINODE -s -m shell -a "cd /root/ && ./backup-ansible.sh 1.3 $SITE"
 }
@@ -59,6 +65,8 @@ else
   PLAYBOOK="$BASE/ansible-docker/playbooks"
   DOCKER=$2
   MAIL="mail.yml"
+  BACKUP="backup.yml"
+  SITESET="neticrm-deploy.yml"
 fi
 
 PROMPT=1
@@ -76,17 +84,19 @@ Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
+  ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
+  ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 
 EOF
   if [ $PROMPT -eq 0 ]; then
     create_site $EXTRAVARS $PLAYBOOK
   else
-    read -p "Are you really want to create site? (y/n)" CHOICE 
-    case "$CHOICE" in 
-      y|Y ) 
+    read -p "Are you really want to create site? (y/n)" CHOICE
+    case "$CHOICE" in
+      y|Y )
         create_site $EXTRAVARS $PLAYBOOK
         ;;
-      n|N ) 
+      n|N )
         exit 1
         ;;
       * ) echo "invalid";;
