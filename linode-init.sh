@@ -33,10 +33,10 @@ case "$CHOICE" in
   y|Y )
     linode-linode group -g "ansible" -l "$TARGET"
     IP=$(linode show $TARGET | grep 'ips' | awk '{print $2}')
-    if [ -n "$IP"]; then
+    if [ -n "$IP" ]; then
       echo "$IP $TARGET" >> /etc/hosts
       ssh-keyscan $IP >> ~/.ssh/known_hosts
-    fi;
+    fi
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
