@@ -38,7 +38,6 @@ create_site() {
 
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
-  /usr/local/bin/ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
   /usr/local/bin/ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 }
 
@@ -64,7 +63,6 @@ else
   PLAYBOOK="$BASE/ansible-docker/playbooks"
   DOCKER=$2
   MAIL="mail.yml"
-  BACKUP="backup.yml"
   SITESET="neticrm-deploy.yml"
 fi
 

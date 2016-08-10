@@ -37,11 +37,10 @@ case "$CHOICE" in
     ssh-keyscan $IP >> ~/.ssh/known_hosts
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
-    ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
-    ansible-playbook $BASE/ansible-docker/playbooks/backup.yml --extra-vars "target=$TARGET" -t start
     ;;
   n|N ) 
     exit 1
