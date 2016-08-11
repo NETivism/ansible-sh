@@ -82,7 +82,6 @@ Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
   ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
-  ansible-playbook $PLAYBOOK/$BACKUP --extra-vars "$VARFILE" --tags=single-site 
   ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 
 EOF
