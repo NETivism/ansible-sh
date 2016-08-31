@@ -40,6 +40,7 @@ case "$CHOICE" in
     fi
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    ansible-playbook $BASE/ansible-docker/playbooks/fqdn.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/nginx.yml --extra-vars "target=$TARGET" -t reload
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
