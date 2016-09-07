@@ -69,7 +69,7 @@ function check_status() {
     33)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
-      ansible-playbook $PLAYBOOK_BASE/dns.yml --extra-vars "@$JSON_FILE" --tags remove
+      $SCRIPT_BASE/remove-site.sh $TARGET/$DOMAIN docker.yml --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
         jq -c '.status=3' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE

@@ -15,11 +15,6 @@ remove_site() {
   echo "removing site ..."
   ansible-playbook $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove
   
-  #echo "removing nginx config ..."
-  #ansible-playbook $PLAYBOOK/nginx.yml --extra-vars "$VARFILE" --tags=remove
-  #echo "removing dns record ..."
-  #ansible-playbook $PLAYBOOK/dns.yml --extra-vars "$VARFILE" --tags=remove
-  
   echo "done"
 }
 
