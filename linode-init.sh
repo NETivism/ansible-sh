@@ -18,12 +18,13 @@ Help:
 EOF
 }
 
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 3 ]; then
   show_help
   exit 0
 else
   TARGET=$1
   HOSTNAME=$2
+  HOST=$3
 fi
 
 
@@ -37,13 +38,15 @@ case "$CHOICE" in
       echo "$IP $TARGET" >> /etc/hosts
       ssh-keyscan $IP >> ~/.ssh/known_hosts
     fi
-    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME"
+    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    ansible-playbook $BASE/ansible-docker/playbooks/fqdn.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/nginx.yml --extra-vars "target=$TARGET" -t reload
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
     ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
+    ansible-playbook $BASE/ansible-docker/playbooks/user.yml --extra-vars "target=$TARGET" -t mount
     ;;
   n|N ) 
     exit 1

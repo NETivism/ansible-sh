@@ -16,8 +16,8 @@ Help:
   Add new (without linode_id):
     linode-add.sh 'api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
 
-  Update linode (with linode_id):
-    linode-add.sh 'api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
+  Update linode (must with linode_id):
+    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
 
 EOF
 }
