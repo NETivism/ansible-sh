@@ -33,6 +33,11 @@ else
 fi
 
 PROMPT=1
+for VAR in "$@"; do
+  if [ "$VAR" = "--yes" ]; then
+    PROMPT=0
+  fi
+done
 
 # ====================
 if [ -f "$TARGET/$SITE" ]; then
