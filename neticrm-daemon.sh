@@ -69,7 +69,7 @@ function check_status() {
     33)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
-      $SCRIPT_BASE/remove-site.sh $TARGET/$DOMAIN docker.yml --yes
+      $SCRIPT_BASE/remove-site.sh $TARGET/$DOMAIN --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
         jq -c '.status=3' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
@@ -82,7 +82,7 @@ function check_status() {
 FILES="/etc/ansible/target/*/*"
 for f in $FILES
 do
-  if [ "$(( $(date +"%s") - $(stat -c "%Y" $f) ))" -lt "600" ]; then
+  if [ "$(( $(date +"%s") - $(stat -c "%Y" $f) ))" -lt "120" ]; then
     echo "Checking file: $f"
     STATUS=`jq -r .status $f`
     check_status $STATUS $f
