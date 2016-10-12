@@ -83,8 +83,12 @@ FILES="/etc/ansible/target/*/*"
 for f in $FILES
 do
   if [ "$(( $(date +"%s") - $(stat -c "%Y" $f) ))" -lt "120" ]; then
-    echo "Checking file: $f"
+    echo "=============================================================="
+    echo "$(date +"%Y-%m-%d %H:%M:%S") Start checking $f"
     STATUS=`jq -r .status $f`
+    echo "Status: $STATUS"
     check_status $STATUS $f
+    echo "$(date +"%Y-%m-%d %H:%M:%S") End checking $f"
+    echo "=============================================================="
   fi
 done
