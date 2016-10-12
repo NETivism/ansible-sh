@@ -13,7 +13,7 @@ remove_site() {
   VARFILE=$1
   PLAYBOOK=$2
   echo "removing site ..."
-  ansible-playbook -v $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove
+  /usr/local/bin/ansible-playbook -v $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove
   # above yml will also include follow playbook.
   # ansible-playbook -v $PLAYBOOK/nginx.yml --extra-vars "$VARFILE" --tags=remove
   # ansible-playbook -v $PLAYBOOK/dns.yml --extra-vars "$VARFILE" --tags=remove
