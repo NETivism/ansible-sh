@@ -39,6 +39,13 @@ case "$CHOICE" in
       echo "$IP $TARGET" >> /etc/hosts
       ssh-keyscan $IP >> ~/.ssh/known_hosts
     fi
+
+    # clear linode-inventory cache
+    if [ -f /tmp/linode-inventory.json ]; then
+      rm -f /tmp/linode-inventory.json
+    fi
+
+    # start
     echo "[0] Start init ..."
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     echo "[1] Start bootstrap ..."
