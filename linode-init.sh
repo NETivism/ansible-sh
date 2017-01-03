@@ -54,7 +54,7 @@ case "$CHOICE" in
     echo "[6] Start neticrm deploy ..."
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
     echo "[7] Start mail ..."
-    ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
+    ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "target=$TARGET" -t start
     echo "[8] Start user ..."
     ansible-playbook $BASE/ansible-docker/playbooks/user.yml --extra-vars "target=$TARGET" -t mount
     ;;
