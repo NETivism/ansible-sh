@@ -5,16 +5,16 @@ show_help() {
 cat << EOF
 Help: 
   Usage:
-    $0 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
-  datacenter: 8(Tokyo) or 9(Singapore)
+    $0 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512'
+  datacenter: 8(Tokyo) or 9(Singapore) or 11(Tokyo 2)
   distribution: please always use 140(debian jessie)
-  plan: 1,2,4,8 GB mem
+  plan: 1,2,4 means 2/4/8 gb plan
 
   Without prompt:
-    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512' --yes
+    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512' --yes
 
   Add new (without linode_id):
-    linode-add.sh 'api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
+    linode-add.sh 'api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512'
 
   Update linode (must with linode_id):
     linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
@@ -52,7 +52,7 @@ EOF
 if [ $PROMPT -eq 0 ]; then
   linode_add $ARGS
 else
-  read -p "Are you really want to create site? (y/n)" CHOICE 
+  read -p "Are you really want to create linode? (y/n)" CHOICE 
   case "$CHOICE" in 
     y|Y ) 
       linode_add $ARGS
