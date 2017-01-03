@@ -6,7 +6,8 @@ show_help() {
 cat << EOF
 Help: 
   Usage:
-    $0 linode_name hostname
+    $0 linode_name hostname host
+    $0 neticrm-d5 m5.t2.neticrm.net m5.t2
 
   This script will initialize your linode, include these step:
     - Assume you'll use "answerable" for ansible login user
