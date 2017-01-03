@@ -39,14 +39,23 @@ case "$CHOICE" in
       echo "$IP $TARGET" >> /etc/hosts
       ssh-keyscan $IP >> ~/.ssh/known_hosts
     fi
+    echo "[0] Start init ..."
     ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
+    echo "[1] Start bootstrap ..."
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    echo "[2] Start fqdn ..."
     ansible-playbook $BASE/ansible-docker/playbooks/fqdn.yml --extra-vars "target=$TARGET"
+    echo "[3] Start nginx ..."
     ansible-playbook $BASE/ansible-docker/playbooks/nginx.yml --extra-vars "target=$TARGET" -t reload
+    echo "[4] Start rolling upgrade ..."
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
+    echo "[5] Start security ..."
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
+    echo "[6] Start neticrm deploy ..."
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
+    echo "[7] Start mail ..."
     ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "@$BASE/target/$TARGET/vmail" -t start
+    echo "[8] Start user ..."
     ansible-playbook $BASE/ansible-docker/playbooks/user.yml --extra-vars "target=$TARGET" -t mount
     ;;
   n|N ) 
