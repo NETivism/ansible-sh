@@ -32,8 +32,8 @@ create_site() {
   echo "Waiting site installation ..."
   # we needs this because when mail enable, we still running drupal download and install
   sleep 60
-  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
-  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
+  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --extra-vars "target=$TARGET" --tags=stop
+  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --extra-vars "target=$TARGET" --tags=start
   create_email
 
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
