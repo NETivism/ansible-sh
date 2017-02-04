@@ -54,7 +54,7 @@ create_email() {
 BASE=/etc/ansible
 if [ "$#" -lt 2 ]; then
   show_help
-  exit 0
+  exit 1
 else
   IFS='/' read -r -a INPUT <<< "$1"
   LINODE="${INPUT[0]}"
@@ -92,15 +92,19 @@ EOF
     case "$CHOICE" in 
       y|Y ) 
         create_site $EXTRAVARS $PLAYBOOK
+        exit 0
         ;;
       n|N ) 
         exit 1
         ;;
-      * ) echo "invalid";;
+      * ) 
+        echo "invalid"
+        exit 1
+        ;;
     esac
   fi
 else
   echo -e "\e[1;31m[File or target not found]\e[0m"
   show_help
-  exit 0
+  exit 1
 fi
