@@ -92,7 +92,6 @@ EOF
     case "$CHOICE" in 
       y|Y ) 
         create_site $EXTRAVARS $PLAYBOOK
-        exit 0
         ;;
       n|N ) 
         exit 1
