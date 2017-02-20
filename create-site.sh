@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# Usage info
+PROMPT=1
+WELCOME=0
+BASE=/etc/ansible
+LINODE=""
+set -e
+
 show_help() {
 cat << EOF
 Help: 
@@ -15,13 +20,37 @@ Help:
   Create site without prompt:
     $0 server1/test.com docker.yml --yes
 
+  Create site without prompt and send welcome letter:
+    $0 server1/test.com docker.yml --yes --welcome-letter
+
   Example json:
     {"target":"neticrm-d7-docker","domain":"demo.neticrm.tw","port_www":"8003","port_db":"10003","repos":"netivism/docker-wheezy-php55:fpm","mount":"/mnt/neticrm-7","dbname":"demoneticrm","passwd":"abcabc","type":"neticrm_fpm","init":"neticrm-7.sh"}
     {"target":"docker-test","domain":"t6.neticrm","port_www":"8002","port_db":"10002","repos":"netivism/docker-wheezy-php55:fpm","mount":"/mnt/neticrm-6","dbname":"t6neticrm","passwd":"123456","type":"neticrm_fpm","init":"neticrm-6.sh"}
 EOF
 }
 
-set -e
+if [ "$#" -lt 2 ]; then
+  show_help
+  exit 1
+else
+  IFS='/' read -r -a INPUT <<< "$1"
+  LINODE="${INPUT[0]}"
+  SITE="${INPUT[1]}"
+  TARGET="$BASE/target/$LINODE"
+  PLAYBOOK="$BASE/ansible-docker/playbooks"
+  DOCKER=$2
+  MAIL="mail.yml"
+  SITESET="neticrm-deploy.yml"
+fi
+
+for VAR in "$@"; do
+  if [ "$VAR" = "--yes" ]; then
+    PROMPT=0
+  fi
+  if [ "$VAR" = "--welcome-letter" ]; then
+    WELCOME=1
+  fi
+done
 
 create_site() {
   VARFILE=$1
@@ -37,7 +66,9 @@ create_site() {
   create_email
 
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
-  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
+  if [ $WELCOME ]; then
+    /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
+  fi
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 }
 
@@ -50,28 +81,6 @@ create_email() {
   EMAIL_PASSWORD="${VAR[1]}"
   echo {\"email\":[{\"username\":\""$EMAIL_ACCOUNT"\", \"password\":\""$EMAIL_PASSWORD"\"}]} > "$json_file"
 }
-
-BASE=/etc/ansible
-if [ "$#" -lt 2 ]; then
-  show_help
-  exit 1
-else
-  IFS='/' read -r -a INPUT <<< "$1"
-  LINODE="${INPUT[0]}"
-  SITE="${INPUT[1]}"
-  TARGET="$BASE/target/$LINODE"
-  PLAYBOOK="$BASE/ansible-docker/playbooks"
-  DOCKER=$2
-  MAIL="mail.yml"
-  SITESET="neticrm-deploy.yml"
-fi
-
-PROMPT=1
-for VAR in "$@"; do
-  if [ "$VAR" = "--yes" ]; then
-    PROMPT=0
-  fi
-done
 
 # ====================
 if [ -f "$TARGET/$SITE" ]; then

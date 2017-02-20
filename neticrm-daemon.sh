@@ -49,7 +49,7 @@ function check_status() {
     11)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
-      $SCRIPT_BASE/create-site.sh $TARGET/$DOMAIN docker.yml --yes
+      $SCRIPT_BASE/create-site.sh $TARGET/$DOMAIN docker.yml --yes --welcome-letter
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
         jq -c '.status=1' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
