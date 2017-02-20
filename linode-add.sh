@@ -8,7 +8,7 @@ Help:
     $0 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512'
   datacenter: 8(Tokyo) or 9(Singapore) or 11(Tokyo 2)
   distribution: please always use 140(debian jessie)
-  plan: 1,2,4 means 2/4/8 gb plan
+  plan: 1,2,4,8 means 1/2/4/8 gb plan
 
   Without prompt:
     linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512' --yes
