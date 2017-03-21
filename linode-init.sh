@@ -51,24 +51,51 @@ case "$CHOICE" in
     if [ -n "$LOGINNAME" ]; then
       echo "Login with remote user '$LOGINNAME' with password ... "
       ansible-playbook -u $LOGINNAME -k -b --become-method=sudo --ask-become-pass $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
+    else
+      exit 1;
     fi;
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[1] Start bootstrap ..."
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[2] Start fqdn ..."
     ansible-playbook $BASE/ansible-docker/playbooks/fqdn.yml --extra-vars "target=$TARGET"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[3] Start nginx ..."
     ansible-playbook $BASE/ansible-docker/playbooks/nginx.yml --extra-vars "target=$TARGET" -t reload
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[4] Start rolling upgrade ..."
     ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars "target=$TARGET"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[5] Start security ..."
     ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars "target=$TARGET"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[6] Start neticrm deploy ..."
     ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars "target=$TARGET" -t load,deploy-6,deploy-7
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[7] Start mail ..."
     ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars "target=$TARGET" -t start
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     echo "[8] Start user ..."
     ansible-playbook $BASE/ansible-docker/playbooks/user.yml --extra-vars "target=$TARGET" -t mount
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
     ;;
   n|N ) 
     exit 1
