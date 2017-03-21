@@ -30,7 +30,7 @@ fi
 
 
 
-read -p "You need to prepared authorized_key and root password. Really want to go? (y/n)" CHOICE 
+read -p "You need to prepared authorized_key into palybook init roles files. Really want to go? (y/n)" CHOICE 
 case "$CHOICE" in 
   y|Y )
     linode-linode group -g "ansible" -l "$TARGET"
@@ -47,7 +47,12 @@ case "$CHOICE" in
 
     # start
     echo "[0] Start init ..."
-    ansible-playbook -k $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
+    read -p "Enter your superuser(with sudo permission) of remote host: " -e -i root LOGINNAME
+    if [ -n "$LOGINNAME" ]; then
+      echo "Login with remote user '$LOGINNAME' with password ... "
+      ansible-playbook -u $LOGINNAME -k -b --become-method=sudo --ask-become-pass $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
+    fi;
+
     echo "[1] Start bootstrap ..."
     ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars "target=$TARGET"
     echo "[2] Start fqdn ..."
