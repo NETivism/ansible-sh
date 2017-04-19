@@ -52,7 +52,7 @@ function check_status() {
       $SCRIPT_BASE/create-site.sh $TARGET/$DOMAIN docker.yml --yes --welcome-letter
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
-        jq -c '.status=1' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
+        jq -c '.status=1' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE && chown neticrm:neticrm $JSON_FILE
         curl -X POST https://neticrm.tw/neticrm/ansible/$DOMAIN/1?k=$API_KEY
       fi  
       ;;
@@ -62,7 +62,7 @@ function check_status() {
       $SCRIPT_BASE/suspend-site.sh $TARGET/$DOMAIN docker.yml --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
-        jq -c '.status=2' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
+        jq -c '.status=2' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE && chown neticrm:neticrm $JSON_FILE
         curl -X POST https://neticrm.tw/neticrm/ansible/$DOMAIN/2?k=$API_KEY
       fi
       ;;
@@ -72,7 +72,7 @@ function check_status() {
       $SCRIPT_BASE/remove-site.sh $TARGET/$DOMAIN --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
-        jq -c '.status=3' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE
+        jq -c '.status=3' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE && chown neticrm:neticrm $JSON_FILE
         curl -X POST https://neticrm.tw/neticrm/ansible/$DOMAIN/3?k=$API_KEY
       fi
       ;;
