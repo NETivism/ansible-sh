@@ -66,10 +66,10 @@ create_site() {
   create_email
 
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
-  if [ "$WELCOME" -eq "1"]; then
+  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site
+  if [ "$WELCOME" -eq "1" ]; then
     /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
   fi
-  /usr/local/bin/ansible-playbook -v $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 }
 
 create_email() {
