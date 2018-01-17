@@ -5,19 +5,19 @@ show_help() {
 cat << EOF
 Help: 
   Usage:
-    $0 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512'
+    $0 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=140 swap=512'
   datacenter: 8(Tokyo) or 9(Singapore) or 11(Tokyo 2)
-  distribution: please always use 140(debian jessie)
-  plan: 1,2,4,8 means 1/2/4/8 gb plan
+  distribution: please always use 140(debian)
+  plan: 1,2,3,4 means 1/2/4/8 gb plan, 5,6,7,8 means 12/24/48/64 gb plan
 
   Without prompt:
-    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512' --yes
+    linode-add.sh 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=140 swap=512' --yes
 
   Add new (without linode_id):
-    linode-add.sh 'api_key=your_key name=test plan=1 datacenter=11 distribution=140 swap=512'
+    linode-add.sh 'api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=140 swap=512'
 
   Update linode (must with linode_id):
-    linode-add.sh 'linode_id=173462 api_key=your_key name=test plan=1 datacenter=8 distribution=140 swap=512'
+    linode-add.sh 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=140 swap=512'
 
 EOF
 }
