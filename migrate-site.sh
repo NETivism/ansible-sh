@@ -32,24 +32,12 @@ create_site() {
   sleep 30
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=stop
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --tags=start
-  create_email
   /usr/local/bin/ansible-playbook $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
-
   /usr/local/bin/ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site
 
   echo "Prepare to upgrade ..."
-  sleep 30
-  ansible $LINODE -s -m shell -a "cd /root/ && ./backup-ansible.sh 1.3 $SITE"
-}
-
-create_email() {
-  file="$TARGET/vmail_account"
-  json_file="$TARGET/vmail_json"
-  email=$(cat "$file")
-  IFS=' ' read -ra VAR <<< "$email"
-  EMAIL_ACCOUNT="${VAR[0]}"
-  EMAIL_PASSWORD="${VAR[1]}"
-  echo {\"email\":[{\"username\":\""$EMAIL_ACCOUNT"\", \"password\":\""$EMAIL_PASSWORD"\"}]} > "$json_file"
+  #sleep 30
+  #ansible $LINODE -s -m shell -a "cd /root/ && ./backup-ansible.sh 1.3 $SITE"
 }
 
 BASE=/etc/ansible
@@ -80,8 +68,7 @@ if [ -f "$TARGET/$SITE" ]; then
   cat << EOF
 Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
-  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
-  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
+  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=restart
   ansible-playbook $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site 
 
 EOF

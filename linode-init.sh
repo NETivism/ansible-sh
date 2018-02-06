@@ -100,6 +100,11 @@ case "$CHOICE" in
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[7] Start mail ..."
+    CMD="ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t create"
+    echo $CMD
+    bash -c "$CMD"
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
     CMD="ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t start"
     echo $CMD
     bash -c "$CMD"

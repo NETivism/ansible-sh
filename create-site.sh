@@ -63,23 +63,11 @@ create_site() {
   sleep 60
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --extra-vars "target=$LINODE" --tags=stop
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail" --extra-vars "target=$LINODE" --tags=start
-  create_email
-
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "@$TARGET/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$SITESET --extra-vars "$VARFILE" --tags=single-site
   if [ "$WELCOME" -eq "1" ]; then
     /usr/local/bin/ansible-playbook -v $PLAYBOOK/$MAIL --extra-vars "$VARFILE" --tags=welcome
   fi
-}
-
-create_email() {
-  file="$TARGET/vmail_account"
-  json_file="$TARGET/vmail_json"
-  email=$(cat "$file")
-  IFS=' ' read -ra VAR <<< "$email"
-  EMAIL_ACCOUNT="${VAR[0]}"
-  EMAIL_PASSWORD="${VAR[1]}"
-  echo {\"email\":[{\"username\":\""$EMAIL_ACCOUNT"\", \"password\":\""$EMAIL_PASSWORD"\"}]} > "$json_file"
 }
 
 # ====================
@@ -88,8 +76,7 @@ if [ -f "$TARGET/$SITE" ]; then
   cat << EOF
 Command will be execute:
   ansible-playbook docker.yml --extra-vars "$EXTRAVARS" --tags=start
-  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=stop
-  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=start
+  ansible-playbook mail.yml --extra-vars "@$TARGET/vmail" --tags=restart
   ansible-playbook backup.yml --extra-vars "$EXTRAVARS" --tags=single-site
   ansible-playbook neticrm-deploy.yml --extra-vars "$EXTRAVARS" --tags=single-site
 
