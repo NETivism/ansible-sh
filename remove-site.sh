@@ -62,7 +62,12 @@ EOF
   if [ $PROMPT -eq 0 ]; then
     remove_site $EXTRAVARS $PLAYBOOK
   else
-    read -p "Are you really want to REMOVE this site? (y/n)" CHOICE 
+    if [ $REMOVEDATA -eq 1]; then
+      QUESTION="Are you really want to \e[0;31mREMOVE\e[0m this site and \e[0;31mREMOVE DATA\e[0m? (y/n)"
+    else
+      QUESTION="Are you really want to \e[0;31mREMOVE\e[0m this site? (y/n)"
+    fi
+    read -p "$QUESTION" CHOICE 
     case "$CHOICE" in 
       y|Y ) 
         remove_site $EXTRAVARS $PLAYBOOK
