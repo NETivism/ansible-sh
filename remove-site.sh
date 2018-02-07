@@ -44,7 +44,7 @@ for VAR in "$@"; do
   if [ "$VAR" = "--yes" ]; then
     PROMPT=0
   fi
-  if [ "$VAR" = "--remove-data"]; then
+  if [ "$VAR" = "--remove-data" ]; then
     REMOVEDATA=1
   fi
 done
@@ -62,12 +62,12 @@ EOF
   if [ $PROMPT -eq 0 ]; then
     remove_site $EXTRAVARS $PLAYBOOK
   else
-    if [ $REMOVEDATA -eq 1]; then
+    if [ $REMOVEDATA -eq 1 ]; then
       QUESTION="Are you really want to \e[0;31mREMOVE\e[0m this site and \e[0;31mREMOVE DATA\e[0m? (y/n)"
     else
       QUESTION="Are you really want to \e[0;31mREMOVE\e[0m this site? (y/n)"
     fi
-    read -p "$QUESTION" CHOICE 
+    read -p "$(echo -e "$QUESTION")" CHOICE
     case "$CHOICE" in 
       y|Y ) 
         remove_site $EXTRAVARS $PLAYBOOK
