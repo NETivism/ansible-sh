@@ -18,7 +18,7 @@ remove_site() {
   # ansible-playbook -v $PLAYBOOK/nginx.yml --extra-vars "$VARFILE" --tags=remove
   # ansible-playbook -v $PLAYBOOK/dns.yml --extra-vars "$VARFILE" --tags=remove
   
-  if [ $REMOVEDATA -eq 1 ] && [ -d "/var/www/sites/$SITE" ]; then
+  if [ $REMOVEDATA -eq 1 ]; then
     /usr/local/bin/ansible-playbook -v $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove-data
   fi
   echo "done"
