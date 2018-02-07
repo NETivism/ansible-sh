@@ -21,6 +21,7 @@ remove_site() {
   if [ $REMOVEDATA -eq 1 ]; then
     /usr/local/bin/ansible-playbook -v $PLAYBOOK/docker.yml --extra-vars "$VARFILE" --tags=remove-data
   fi
+  /usr/local/bin/ansible-playbook -v $PLAYBOOK/mail.yml --extra-vars "target=$TARGET domain=$SITE" --tags=remove
   echo "done"
 }
 
