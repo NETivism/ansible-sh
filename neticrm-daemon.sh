@@ -84,12 +84,10 @@ function check_status() {
 }
 
 FILES=$(find /etc/ansible/target/*/*.* -mmin -3 -printf "%T@ %p\n" | sort -n | awk '{ print $2 }')
-COUNTER=0;
 for FILE in $FILES
 do
-  COUNTER=$((COUNTER+1))
   # only run first matches, others will be done in next cron
-  if [ $COUNTER -eq 1 ] && [ $RUNNING -eq 0 ]; then
+  if [ $RUNNING -eq 0 ]; then
     echo "=============================================================="
     echo "$(date +"%Y-%m-%d %H:%M:%S") Start checking $FILE"
     STATUS=`jq -r .status $FILE`
