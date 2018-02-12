@@ -79,16 +79,22 @@ function check_status() {
   esac
 }
 
-FILES="/etc/ansible/target/*/*"
-for f in $FILES
+FILES=$(find /etc/ansible/target/*/*.* -mmin -3)
+COUNTER=0;
+for $FILE in $FILES
 do
-  if [ "$(( $(date +"%s") - $(stat -c "%Y" $f) ))" -lt "120" ]; then
+  COUNTER=$((COUNTER+1))
+  # only run first matches, others will be done in next cron
+  if [ $COUNTER -eq 1 ]; then
     echo "=============================================================="
-    echo "$(date +"%Y-%m-%d %H:%M:%S") Start checking $f"
-    STATUS=`jq -r .status $f`
+    echo "$(date +"%Y-%m-%d %H:%M:%S") Start checking $FILE"
+    STATUS=`jq -r .status $FILE`
     echo "Status: $STATUS"
-    check_status $STATUS $f
-    echo "$(date +"%Y-%m-%d %H:%M:%S") End checking $f"
+    check_status $STATUS $FILE
+    echo "$(date +"%Y-%m-%d %H:%M:%S") End checking $FILE"
     echo "=============================================================="
+  else
+    echo "SKIP - $FILE"
+    $(touch $FILE);
   fi
 done
