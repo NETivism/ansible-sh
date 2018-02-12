@@ -26,6 +26,7 @@ if [ -z "$API_KEY" ]; then
   exit
 fi
 
+RUNNING=0
 # Check target file status and do something
 function check_status() {
   # Status codes
@@ -49,6 +50,7 @@ function check_status() {
     11)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
+      RUNNING=1
       $SCRIPT_BASE/create-site.sh $TARGET/$DOMAIN docker.yml --yes --welcome-letter
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
@@ -59,6 +61,7 @@ function check_status() {
     22)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
+      RUNNING=2
       $SCRIPT_BASE/suspend-site.sh $TARGET/$DOMAIN docker.yml --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
@@ -69,6 +72,7 @@ function check_status() {
     33)
       TARGET=`jq -r .target $JSON_FILE`
       DOMAIN=`jq -r .domain $JSON_FILE`
+      RUNNING=3
       $SCRIPT_BASE/remove-site.sh $TARGET/$DOMAIN --yes
       RESULT=$?
       if [ $RESULT -eq 0 ]; then
@@ -79,13 +83,13 @@ function check_status() {
   esac
 }
 
-FILES=$(find /etc/ansible/target/*/*.* -mmin -3)
+FILES=$(find /etc/ansible/target/*/*.* -mmin -3 -printf "%T@ %p\n" | sort -n | awk '{ print $2 }')
 COUNTER=0;
 for FILE in $FILES
 do
   COUNTER=$((COUNTER+1))
   # only run first matches, others will be done in next cron
-  if [ $COUNTER -eq 1 ]; then
+  if [ $COUNTER -eq 1 ] && [ $RUNNING -eq 0 ]; then
     echo "=============================================================="
     echo "$(date +"%Y-%m-%d %H:%M:%S") Start checking $FILE"
     STATUS=`jq -r .status $FILE`
