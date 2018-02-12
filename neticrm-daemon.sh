@@ -81,7 +81,7 @@ function check_status() {
 
 FILES=$(find /etc/ansible/target/*/*.* -mmin -3)
 COUNTER=0;
-for $FILE in $FILES
+for FILE in $FILES
 do
   COUNTER=$((COUNTER+1))
   # only run first matches, others will be done in next cron
