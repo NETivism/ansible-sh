@@ -34,7 +34,7 @@ else
   LINODE="${INPUT[0]}"
   SITE="${INPUT[1]}"
   TARGET="$BASE/target/$LINODE"
-  PLAYBOOK="$BASE/ansible-docker/playbooks"
+  PLAYBOOK="$BASE/playbooks"
   DOCKER=$2
   MAIL="mail.yml"
 fi

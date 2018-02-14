@@ -12,7 +12,7 @@ Help:
   This script will initialize your linode, include these step:
     - Assume you'll use "answerable" for ansible login user
     - First will login in root, will ask root password for once
-    - Put your key at $BASE/ansible-docker/playbooks/roles/init/files/authorized_key
+    - Put your key at $BASE/playbooks/roles/init/files/authorized_key
     - Add authorized_key for "answerable" further use
     - Install docker and some other packages
 
@@ -50,7 +50,7 @@ case "$CHOICE" in
     read -p "Enter your superuser(with sudo permission) of remote host: " -e -i root LOGINNAME
     if [ -n "$LOGINNAME" ]; then
       echo "Login with remote user '$LOGINNAME' with password ... "
-      ansible-playbook -u $LOGINNAME -k -b --become-method=sudo --ask-become-pass $BASE/ansible-docker/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
+      ansible-playbook -u $LOGINNAME -k -b --become-method=sudo --ask-become-pass $BASE/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     else
       exit 1;
     fi;
@@ -58,61 +58,61 @@ case "$CHOICE" in
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[1] Start bootstrap ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/bootstrap-jessie.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/bootstrap-jessie.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[2] Start fqdn ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/fqdn.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/fqdn.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[3] Start nginx ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/nginx.yml --extra-vars \"target=$TARGET\" -t reload"
+    CMD="ansible-playbook $BASE/playbooks/nginx.yml --extra-vars \"target=$TARGET\" -t reload"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[4] Start rolling upgrade ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/rolling_upgrade.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/rolling_upgrade.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[5] Start security ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/security.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/security.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[6] Start neticrm deploy ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/neticrm-deploy.yml --extra-vars \"target=$TARGET\" -t load,deploy-6,deploy-7"
+    CMD="ansible-playbook $BASE/playbooks/neticrm-deploy.yml --extra-vars \"target=$TARGET\" -t load,deploy-6,deploy-7"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[7] Start mail ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t create"
+    CMD="ansible-playbook $BASE/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t create"
     echo $CMD
     bash -c "$CMD"
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t start"
+    CMD="ansible-playbook $BASE/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t start"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[8] Start user ..."
-    CMD="ansible-playbook $BASE/ansible-docker/playbooks/user.yml --extra-vars \"target=$TARGET\" -t mount"
+    CMD="ansible-playbook $BASE/playbooks/user.yml --extra-vars \"target=$TARGET\" -t mount"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?

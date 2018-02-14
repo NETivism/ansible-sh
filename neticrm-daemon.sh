@@ -38,7 +38,7 @@ function check_status() {
   # 33 - pending to clear DNS
   STATUS_CODE=$1
   JSON_FILE=$2
-  PLAYBOOK_BASE=/etc/ansible/ansible-docker/playbooks
+  PLAYBOOK_BASE=/etc/ansible/playbooks
   SCRIPT_BASE=/etc/ansible/ansible-sh
   case "$STATUS_CODE" in
     1)

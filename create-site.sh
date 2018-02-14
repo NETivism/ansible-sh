@@ -10,7 +10,7 @@ show_help() {
 cat << EOF
 Help: 
   Assume your base is /etc/ansible, 
-  BASE/ansible-docker/playbooks - have your playbooks
+  BASE/playbooks - have your playbooks
   BASE/target - have your docker hosts inventories
   BASE/target/target_name/* - extravars json, usally naming by domain name
 
@@ -37,7 +37,7 @@ else
   LINODE="${INPUT[0]}"
   SITE="${INPUT[1]}"
   TARGET="$BASE/target/$LINODE"
-  PLAYBOOK="$BASE/ansible-docker/playbooks"
+  PLAYBOOK="$BASE/playbooks"
   DOCKER=$2
   MAIL="mail.yml"
   SITESET="neticrm-deploy.yml"
