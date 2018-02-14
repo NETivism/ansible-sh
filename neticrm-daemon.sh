@@ -83,9 +83,10 @@ function check_status() {
   esac
 }
 
-FILES=$(find /etc/ansible/target/*/*.* -mmin -3 -printf "%T@ %p\n" | sort -n | awk '{ print $2 }')
+FILES=$(find /etc/ansible/target/*/*.* -mmin -3 -not -name "*.old" -printf "%T@ %p\n" | sort -n | awk '{ print $2 }')
 for FILE in $FILES
 do
+  echo "$(date +"%Y-%m-%d %H:%M:%S") Trying $FILE..."
   # only run first matches, others will be done in next cron
   if [ $RUNNING -eq 0 ]; then
     echo "=============================================================="
@@ -100,3 +101,4 @@ do
     $(touch $FILE);
   fi
 done
+echo "$(date +"%Y-%m-%d %H:%M:%S") DONE checking"
