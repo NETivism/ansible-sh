@@ -39,7 +39,7 @@ function check_status() {
   STATUS_CODE=$1
   JSON_FILE=$2
   PLAYBOOK_BASE=/etc/ansible/playbooks
-  SCRIPT_BASE=/etc/ansible/ansible-sh
+  SCRIPT_BASE=/etc/ansible/scripts
   case "$STATUS_CODE" in
     1)
       ;;
