@@ -58,7 +58,7 @@ case "$CHOICE" in
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[1] Start bootstrap ..."
-    CMD="ansible-playbook $BASE/playbooks/bootstrap-jessie.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/bootstrap-stretch.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
@@ -113,6 +113,13 @@ case "$CHOICE" in
 
     echo "[8] Start user ..."
     CMD="ansible-playbook $BASE/playbooks/user.yml --extra-vars \"target=$TARGET\" -t mount"
+    echo $CMD
+    bash -c "$CMD"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
+    echo "[8] Start letsencrypt ..."
+    CMD="ansible-playbook $BASE/playbooks/letsencrypt.yml --extra-vars \"target=$TARGET\" -t install"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
