@@ -39,6 +39,9 @@ else
   TARGETB="$BASE/target/$LINODEB"
   PLAYBOOK="$BASE/playbooks"
   YML=$3
+  IP=`cat /etc/hosts | grep neticrm-mail | awk '{ print $1 }'`
+  FQDN=`dig -x "$IP" +short | head -1 | sed 's/\.$//'`
+  SUBDOMAIN=`sed 's/\.neticrm\.tw//g' <<< "$SITEB"`
 fi
 
 copy_site_json() {
@@ -133,8 +136,10 @@ EOF
       create_site $EXTRAVARS $PLAYBOOK
       copy_site_files
       neticrm_tw_config
-       echo "Migrate complete."
-       echo "You need to check DNS setting manually."
+      echo "Migrate complete."
+      echo "You need to check DNS setting manually. Command may like this:"
+      echo ""
+      echo "    linode domain -a record-update -t CNAME -l neticrm.tw -m $SUBDOMAIN -R $FQDN"
       ;;
     n|N ) 
       exit 1
