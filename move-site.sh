@@ -75,9 +75,12 @@ create_site() {
   echo "Waiting site installation ..."
   # we needs this because when mail enable, we still running drupal download and install
   sleep 60
+  rm -f $TARGET/vmail_json #clear vmail_json to prevent wrong assignment
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/mail.yml --extra-vars "@$TARGETB/vmail" --extra-vars "target=$LINODEB" --tags=stop
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/mail.yml --extra-vars "@$TARGETB/vmail" --extra-vars "target=$LINODEB" --tags=start
-  /usr/local/bin/ansible-playbook -v $PLAYBOOK/mail.yml --extra-vars "@$TARGETB/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+  if [ -f $TARGET/vmail_json ]; then
+    /usr/local/bin/ansible-playbook -v $PLAYBOOK/mail.yml --extra-vars "@$TARGETB/vmail_json" --extra-vars "$VARFILE" --tags=site-setting
+  fi
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/neticrm-deploy.yml --extra-vars "$VARFILE" --tags=single-site
   ansible $LINODEB -b -m shell -a "cp /var/www/sites/$SITEB/sites/default/smtp.settings.php /tmp/smtp.settings.php.$SITEB"
 }
