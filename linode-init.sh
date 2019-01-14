@@ -124,6 +124,13 @@ case "$CHOICE" in
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
+
+    echo "[9] Start backup ..."
+    CMD="ansible-playbook $BASE/playbooks/backup.yml --extra-vars \"target=$TARGET\""
+    echo $CMD
+    bash -c "$CMD"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
     ;;
   n|N ) 
     exit 1
