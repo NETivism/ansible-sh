@@ -79,7 +79,7 @@ case "$CHOICE" in
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[4] Start rolling upgrade ..."
-    CMD="ansible-playbook $BASE/playbooks/rolling_upgrade.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/common.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
