@@ -56,6 +56,7 @@ function check_status() {
       if [ $RESULT -eq 0 ]; then
         jq -c '.status=1' $JSON_FILE > /tmp/$DOMAIN && mv /tmp/$DOMAIN $JSON_FILE && chown www-data $JSON_FILE
         curl -X POST https://neticrm.tw/neticrm/ansible/$DOMAIN/1?k=$API_KEY
+        php $SCRIPT_BASE/check-site.php $DOMAIN > /tmp/check-site-output.txt
       fi  
       ;;
     22)
