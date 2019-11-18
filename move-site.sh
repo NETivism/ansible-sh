@@ -11,16 +11,10 @@ Help:
   Assume your base is /etc/ansible, 
   BASE/playbooks - have your playbooks
   BASE/target - have your docker hosts inventories
-  BASE/target/target_name/* - extravars json, usally naming by domain name
+  BASE/target/json - your site domain
 
   move site:
-    $0 linode_target/json_file linode_target/json_file playbook.yml
-
-  move site without prompt:
-    $0 server1/test.com linode_target/json_file docker.yml --yes
-
-  move site without prompt and send welcome letter:
-    $0 server1/test.com server2/test.com docker.yml --yes
+    $0 linode/source_json_file linode/destination_json_file playbook.yml
 
 EOF
 }
@@ -39,7 +33,7 @@ else
   TARGETB="$BASE/target/$LINODEB"
   PLAYBOOK="$BASE/playbooks"
   YML=$3
-  IP=`cat /etc/hosts | grep neticrm-mail | awk '{ print $1 }'`
+  IP=`cat /etc/hosts | grep $LINODEB | awk '{ print $1 }'`
   FQDN=`dig -x "$IP" +short | head -1 | sed 's/\.$//'`
   SUBDOMAIN=`sed 's/\.neticrm\.tw//g' <<< "$SITEB"`
 fi
