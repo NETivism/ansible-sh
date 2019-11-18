@@ -16,12 +16,32 @@ Help:
   move site:
     $0 linode/source_json_file linode/destination_json_file playbook.yml
 
+  move site with some skip:
+    $0 linode/source_json_file linode/destination_json_file playbook.yml --skip-create-site --skip-copy-files --skip-neticrm-conf
 EOF
 }
 if [ "$#" -lt 3 ]; then
   show_help
   exit 1
 else
+  ## collect variable
+  SKIP_CREATE_SITE=0
+  SKIP_COPY_FILES=0
+  SKIP_NETICRM_CONF=0
+  for var in "$@"
+  do
+    if [ $var == "--skip-create-site" ]; then
+      SKIP_CREATE_SITE=1
+    fi
+    if [ $var == "--skip-copy-files" ]; then
+      SKIP_COPY_FILES=1
+    fi
+    if [ $var == "--skip-neticrm-conf" ]; then
+      SKIP_NETICRM_CONF=1
+    fi
+  done
+
+
   IFS='/' read -r -a INPUT <<< "$1"
   LINODEA="${INPUT[0]}"
   SITEA="${INPUT[1]}"
@@ -62,8 +82,16 @@ create_site() {
     echo -e "\e[1;31mCreate Site Error! "$TARGETB/$SITEB" doesn't exists. Abort.\e[0m"
     exit 1;
   fi
-  VARFILE=$1
   echo "Creating site ..."
+
+  # cp ssl related sign
+  HAVESSL=`cat $TARGETB/$SITEB | jq .ssl_crt | grep letsencrypt | wc -l`
+  if [ $HAVESSL = "1" ]; then
+    rsync -al --rsync-path="sudo rsync" --info=progress2 answerable@$LINODEA:/etc/letsencrypt/archive/$SITEA /etc/letsencrypt/archive/
+    rsync -al --rsync-path="sudo rsync" --info=progress2 answerable@$LINODEA:/etc/letsencrypt/live/$SITEA /etc/letsencrypt/live/
+  fi
+
+  VARFILE=$1
   /usr/local/bin/ansible-playbook -v $PLAYBOOK/$YML --extra-vars "$VARFILE" --tags=start
 
   echo "Waiting site installation ..."
@@ -129,10 +157,16 @@ EOF
   read -p "Are you really want to move entier site? (y/n)" CHOICE 
   case "$CHOICE" in 
     y|Y ) 
-      copy_site_json
-      create_site $EXTRAVARS $PLAYBOOK
-      copy_site_files
-      neticrm_tw_config
+      if [ $SKIP_CREATE_SITE == 0 ]; then
+        copy_site_json
+        create_site $EXTRAVARS $PLAYBOOK
+      fi;
+      if [ $SKIP_COPY_FILES == 0 ]; then
+        copy_site_files
+      fi
+      if [ $SKIP_NETICRM_CONF == 0 ]; then
+        neticrm_tw_config
+      fi
       echo "Migrate complete."
       echo "You need to check DNS setting manually. Command may like this:"
       echo ""
