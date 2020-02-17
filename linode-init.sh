@@ -85,25 +85,26 @@ case "$CHOICE" in
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    echo "[5] Start security ..."
-    CMD="ansible-playbook $BASE/playbooks/security.yml --extra-vars \"target=$TARGET\""
-    echo $CMD
-    bash -c "$CMD"
-    RESULT=$?
-    if [ $RESULT -ne 0 ]; then exit 1; fi;
-
-    echo "[6] Start neticrm deploy ..."
+    echo "[5] Start neticrm deploy ..."
     CMD="ansible-playbook $BASE/playbooks/neticrm-deploy.yml --extra-vars \"target=$TARGET\" -t load,deploy-6,deploy-7"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    echo "[7] Start mail ..."
+    echo "[6] Start mail ..."
     CMD="ansible-playbook $BASE/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t create"
     echo $CMD
     bash -c "$CMD"
     if [ $RESULT -ne 0 ]; then exit 1; fi;
+
+    echo "[7] Start security ..."
+    CMD="ansible-playbook $BASE/playbooks/security.yml --extra-vars \"target=$TARGET\""
+    echo $CMD
+    bash -c "$CMD"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
 
     CMD="ansible-playbook $BASE/playbooks/mail.yml --extra-vars \"target=$TARGET\" -t start"
     echo $CMD
