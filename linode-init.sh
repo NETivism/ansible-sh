@@ -33,16 +33,19 @@ fi
 read -p "You need to prepared authorized_key into palybook init roles files. Really want to go? (y/n)" CHOICE 
 case "$CHOICE" in 
   y|Y )
-    linode-linode group -g "ansible" -l "$TARGET"
-    IP=$(linode show $TARGET | grep 'ips' | awk '{print $2}')
-    if [ -n "$IP" ]; then
-      echo "$IP $TARGET" >> /etc/hosts
-      ssh-keyscan $IP >> ~/.ssh/known_hosts
+    IN_HOSTS=$(cat /etc/hosts | grep $TARGET)
+    if [ -z "$IN_HOSTS" ]; then
+      IP=$(linode-cli --text --format="label,tags,ipv4" linodes list | grep $TARGET | awk '{ print $3 }')
+      if [ -n "$IP" ]; then
+        echo "$IP $TARGET" >> /etc/hosts
+        ssh-keyscan $TARGET >> ~/.ssh/known_hosts
+        ssh-keyscan $TARGET >> /root/.ssh/known_hosts
+      fi
     fi
 
-    # clear linode-inventory cache
-    if [ -f /tmp/linode-inventory.json ]; then
-      rm -f /tmp/linode-inventory.json
+    IN_INVENTORY=$(cat $BASE/inventory/linode | grep $TARGET)
+    if [ -z "$IN_INVENTORY" ]; then
+      echo $TARGET >> $BASE/inventory/linode
     fi
 
     # start

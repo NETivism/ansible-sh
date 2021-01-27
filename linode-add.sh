@@ -2,65 +2,32 @@
 
 # Usage info
 show_help() {
-cat << EOF
-Help: 
-  Usage:
-    $0 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=158 swap=512'
-  datacenter: 8(Tokyo) or 9(Singapore) or 11(Tokyo 2)
-  distribution: please always use 158(debian 9 - stretch)
-  plan: 1,2,3,4 means 1/2/4/8 gb plan, 5,6,7,8 means 12/24/48/64 gb plan
-
-  Without prompt:
-    linode-add.sh 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=158 swap=512' --yes
-
-  Add new (without linode_id):
-    linode-add.sh 'api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=158 swap=512'
-
-  Update linode (must with linode_id):
-    linode-add.sh 'linode_id=173462 api_key=your_key name=neticrm-dx plan=4 datacenter=11 distribution=158 swap=512'
-
-EOF
+  echo "Example:"
+  echo "  sudo ./linode-add.sh --region ap-northeast --image linode/debian10 --tags securemx --swap_size 512 --type g6-nanode-1 --label mx100"
+  echo "Types:"
+  linode-cli --format="id,label" linodes types
 }
 
 linode_add() {
-  VAR="$*"
-  echo "Add linode ... '${VAR}'"
-  CMD="ansible all -i "localhost," -c local -m linode -a '$VAR'"
+  USER=$(cat /etc/ansible/ansible.cfg | grep remote_user | awk '{print $3}')
+  #AUTH_KEY=$(cat /etc/ansible/playbooks/roles/init/files/authorized_keys)
+  PASSWORD=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
+  if [ -n "$AUTH_KEY" ]; then
+    CMD="linode-cli linodes create --authorized_keys \"$AUTH_KEY\" --authorized_users "$USER" --root_pass $PASSWORD $ARGS"
+  else
+    CMD="linode-cli linodes create $ARGS --root_pass $PASSWORD"
+  fi
+  echo $CMD
   eval $CMD
+  echo "Root Password: $PASSWORD"
 }
 
 if [ "$#" -lt 1 ]; then
   show_help
   exit 0
 else
-  ARGS=$1
+  for VAR in "$@"; do
+    ARGS="$ARGS $VAR"
+  done
+  linode_add
 fi
-
-PROMPT=1
-for VAR in "$@"; do
-  if [ "$VAR" = "--yes" ]; then
-    PROMPT=0
-  fi
-done
-
-# ====================
-cat << EOF
-Command will be execute:
-  ansible all -i "localhost," -c local -m linode -a '$ARGS'
-
-EOF
-if [ $PROMPT -eq 0 ]; then
-  linode_add $ARGS
-else
-  read -p "Are you really want to create linode? (y/n)" CHOICE 
-  case "$CHOICE" in 
-    y|Y ) 
-      linode_add $ARGS
-      ;;
-    n|N ) 
-      exit 1
-      ;;
-    * ) echo "invalid";;
-  esac
-fi
-
