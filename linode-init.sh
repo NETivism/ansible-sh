@@ -122,14 +122,14 @@ case "$CHOICE" in
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    echo "[8] Start letsencrypt ..."
+    echo "[9] Start letsencrypt ..."
     CMD="ansible-playbook $BASE/playbooks/letsencrypt.yml --extra-vars \"target=$TARGET\" -t install"
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    echo "[9] Start backup ..."
+    echo "[10] Start backup ..."
     CMD="ansible-playbook $BASE/playbooks/backup.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
