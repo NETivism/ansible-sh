@@ -135,6 +135,12 @@ case "$CHOICE" in
     bash -c "$CMD"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
+
+    echo "[11] Setup mx related DNS record..."
+    CMD="$BASE/scripts/mx-record-add.sh $HOST"
+    bash -c "$CMD"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
     ;;
   n|N ) 
     exit 1
