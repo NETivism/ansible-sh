@@ -7,7 +7,7 @@ cat << EOF
 Help: 
   Usage:
     $0 linode_name hostname host
-    $0 neticrm-d5 m5.t2.neticrm.net m5.t2
+    $0 mx100 mx100.secure.neticrm.com mx100.secure
 
   This script will initialize your linode, include these step:
     - Assume you'll use "answerable" for ansible login user
@@ -55,7 +55,7 @@ case "$CHOICE" in
       echo "Login with remote user '$LOGINNAME' with password ... "
       ansible-playbook -u $LOGINNAME -k -b --become-method=sudo --ask-become-pass $BASE/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     else
-      exit 1;
+      ansible-playbook --become-method=sudo $BASE/playbooks/init.yml --extra-vars="target=$TARGET deployer=answerable hostname=$HOSTNAME host=$HOST"
     fi;
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
