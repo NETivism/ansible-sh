@@ -26,6 +26,14 @@ if [ -n "$1" ]; then
     else
       echo "A $SUBNAME already exists"
     fi
+    EXISTS=$(linode-cli --text --no-headers domains records-list $DOMAIN_ID | grep CNAME | grep $SUBNAME)
+    if [ -z "$EXISTS" ]; then
+      CMD="linode-cli --text --no-headers domains records-create $DOMAIN_ID --name mail._domainkey.$SUBNAME --type CNAME --target dkim.secure.neticrm.com"
+      echo $CMD
+      eval $CMD
+    else
+      echo "A $SUBNAME already exists"
+    fi
     EXISTS=$(linode-cli --text --no-headers domains records-list $DOMAIN_ID | grep TXT | grep $SUBNAME)
     if [ -z "$EXISTS" ]; then
       CMD="linode-cli --text --no-headers domains records-create $DOMAIN_ID --name $SUBNAME --type TXT --target \"v=spf1 include:spf.neticrm.net ~all\""
