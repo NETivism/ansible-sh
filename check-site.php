@@ -1,17 +1,21 @@
 <?php
 include('check-site-params.php');
+$message = date("Y-m-d H:i:s ")."Start check ".$argv[1]."\n";
+echo($message);
 print_r($argv);
 $siteUrl = $argv[1];
 if (strstr($siteUrl, DNSNAME)) {
   $seperated = explode('.', $siteUrl);
   $siteName = $seperated[0];
-  $str1 = "linode -o domain -a record-list -l ".DNSNAME." -t CNAME | grep '{$siteName}' | awk -F ' *| *' '{print \$6}'";
+  $str1 = 'ansible-playbook /etc/ansible/playbooks/dns.yml -e "domain='.$siteUrl.' main_domain='.DNSNAME.'" -t findrecord';
   print($str1);
-  $domain = shell_exec($str1);
+  $shellExecResult = shell_exec($str1);
+  preg_match('/"stdout": "(\d+)",/', $shellExecResult, $match);
+  $domain = $match[1];
   print($domain);
   if ($domain) {
     $dnsCheck = 1;
-    print("\n *** DNS check correct *** \n");
+    echo("\n *** DNS check correct *** \n");
     if ($domain) {
       $command = 'ping -c 1 '.$siteUrl;
       $result = shell_exec($command);
@@ -29,11 +33,11 @@ if (strstr($siteUrl, DNSNAME)) {
       print("\n");
       if (strpos($result, $siteUrl)) {
         $smtpCheck = 1;
-        print("\n *** SMTP check correct ***\n");
+        echo("\n *** SMTP check correct ***\n");
       }
       else {
         $smtpCheck = 0;
-        print("\n *** SMTP check incorrect ***\n");
+        echo("\n *** SMTP check incorrect ***\n");
       }
     }
   }
@@ -44,11 +48,15 @@ if (strstr($siteUrl, DNSNAME)) {
   else {
     $email = $argv[2];
   }
-  $command = "docker exec -it ".SEND_EMAIL_SITE." drush send-mail-check-site --to=$email --dns-check=$dnsCheck --smtp-check=$smtpCheck --site=$siteUrl";
+  $message = date("Y-m-d H:i:s ")."Site check finished: ".$argv[1]."\n";
+  echo($message);
+  $command = "/usr/bin/docker exec ".SEND_EMAIL_SITE." drush send-mail-check-site --to=$email --dns-check=$dnsCheck --smtp-check=$smtpCheck --site=$siteUrl";
   print($command."\n");
   $result = shell_exec($command);
   print($result."\n");
   if ($result) {
+    $message = date("Y-m-d H:i:s ")."Send mail finished to ".$email."\n";
+    echo($message);
     print("OK\n");
   }
 }
