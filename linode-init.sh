@@ -61,7 +61,7 @@ case "$CHOICE" in
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
     echo "[1] Start bootstrap ..."
-    CMD="ansible-playbook $BASE/playbooks/bootstrap-stretch.yml --extra-vars \"target=$TARGET\""
+    CMD="ansible-playbook $BASE/playbooks/bootstrap-buster.yml --extra-vars \"target=$TARGET\""
     echo $CMD
     bash -c "$CMD"
     RESULT=$?
