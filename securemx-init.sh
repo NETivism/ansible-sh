@@ -136,7 +136,14 @@ case "$CHOICE" in
     RESULT=$?
     if [ $RESULT -ne 0 ]; then exit 1; fi;
 
-    echo "[11] Setup mx related DNS record..."
+    echo "[11] Setup filebeat..."
+    CMD="ansible-playbook $BASE/playbooks/filebeat.yml --extra-vars \"target=$TARGET\""
+    echo $CMD
+    bash -c "$CMD"
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then exit 1; fi;
+
+    echo "[12] Setup mx related DNS record..."
     CMD="$BASE/scripts/mx-record-add.sh $HOST"
     bash -c "$CMD"
     RESULT=$?
