@@ -12,6 +12,20 @@ $target = $argv[1];
 $repo = $argv[2];
 $dryrun = (isset($argv[3]) && $argv[3] == 'check') ? true : false;
 
+$cmd = "ansible $target -m command -a 'check-version-update-status.sh /etc/ansible/docker-sh' --become";
+exec($cmd, $domains, $rc);
+
+if ($rc !== 0) {
+  echo "No such remote detect.".PHP_EOL;
+  exit(1);
+}
+
+if (!in_array("Up-to-date", $domains)) {
+  echo "$target docker-sh does not up-to-date.".PHP_EOL;
+  exit(1);
+}
+
+unset($domains);
 $cmd = "ansible $target -m command -a 'list-domain-by-specific-repo.sh $repo'";
 exec($cmd, $domains, $rc);
 
